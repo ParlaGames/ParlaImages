@@ -1,0 +1,10 @@
+name: ParlaImages
+version: 1.0
+author: Oogiya
+main: xyz.oogiya.parlaimages.ParlaImages
+description: ParlaImages
+api-version: 1.13
+
+commands:
+  placeimage:
+    description: none

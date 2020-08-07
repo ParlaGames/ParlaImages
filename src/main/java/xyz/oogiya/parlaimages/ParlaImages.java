@@ -50,5 +50,4 @@ public class ParlaImages extends JavaPlugin {
             ex.printStackTrace();
         }
     }
-
 }

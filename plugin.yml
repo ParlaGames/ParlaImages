@@ -7,4 +7,4 @@ api-version: 1.13
 
 commands:
   placeimage:
-    description: none
+    description: nice

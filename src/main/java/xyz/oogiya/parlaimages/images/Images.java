@@ -5,19 +5,19 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
+import xyz.oogiya.parlaimages.util.HiddenStringUtils;
 import xyz.oogiya.parlaimages.util.ImageUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
 public class Images {
@@ -30,7 +30,7 @@ public class Images {
 
     private static Map<String, BufferedImage> images = new HashMap<String, BufferedImage>();
 
-    private Map<Image, Integer> maps = new HashMap<Image, Integer>();
+    private static List<ImageStick> imageSticks = new ArrayList<>();
 
     public Images(File dataFolder, Server server) {
         this.dataFolder = dataFolder;
@@ -45,6 +45,12 @@ public class Images {
         if (image == null) return false;
 
         return true;
+    }
+
+    public static ItemStack getImageStick(Image image) {
+        Bukkit.getLogger().info(image.toString());
+        ImageStick imageStick = new ImageStick(Material.STICK, image);
+        return imageStick.getItemStack();
     }
 
     public static ItemStack getMapItem(int i, int j, Image image) {
@@ -82,7 +88,6 @@ public class Images {
     public static BufferedImage getImage(String filename) {
         File file = new File(dataFolder, File.separatorChar + ImageUtils.IMAGES_DIR + File.separatorChar + filename);
         BufferedImage image = null;
-        Bukkit.getLogger().info(dataFolder.getName() + File.separatorChar + ImageUtils.IMAGES_DIR + File.separatorChar + filename);
         if (!file.exists()) { return null; }
         try {
             image = ImageIO.read(file);

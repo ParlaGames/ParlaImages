@@ -14,11 +14,26 @@ public class Image implements ConfigurationSerializable {
     private double scale;
     private BufferedImage image;
 
-    public Image(String filename, int width, int height, double scale) {
+    public Image(String filename) {
+        this.filename = filename;
+        this.image = Images.getImage(this.filename);
+        this.width = this.image.getWidth();
+        this.height = this.image.getHeight();
+        this.scale = 1;
+    }
+
+    public Image(String filename, double scale) {
+        this.filename = filename;
+        this.scale = scale;
+        this.image = Images.getImage(filename);
+        this.width = (int)(this.image.getWidth() * scale);
+        this.height = (int)(this.image.getHeight() * scale);
+    }
+
+    public Image(String filename, int width, int height) {
         this.filename = filename;
         this.width = width;
         this.height = height;
-        this.scale = scale;
         this.image = Images.getImage(this.filename);
     }
 

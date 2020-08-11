@@ -24,32 +24,45 @@ public class Images {
 
     public static File dataFolder;
 
-    public static Map<UUID, Image> playerImages = new HashMap<UUID, Image>();
+    private static File imageDir;
+    //public static Map<UUID, Image> playerImages = new HashMap<UUID, Image>();
 
     private static Server server;
 
-    private static Map<String, BufferedImage> images = new HashMap<String, BufferedImage>();
+    public static List<Image> imageList = new ArrayList<>();
 
-    private static List<ImageStick> imageSticks = new ArrayList<>();
+    public static Map<Long, Image> imageMap = new HashMap<>();
+    //private static Map<String, BufferedImage> images = new HashMap<String, BufferedImage>();
 
-    public Images(File dataFolder, Server server) {
+    public Images(File dataFolder, File imageDir, Server server) {
         this.dataFolder = dataFolder;
         this.server = server;
+        this.imageDir = imageDir;
     }
 
-    private boolean loadMaps(String filename) {
-        if (!this.images.containsKey(filename.toLowerCase())) return false;
+    private boolean saveMaps() {
 
-        BufferedImage image = getImage(filename);
+        if (!dataFolder.exists()) return false;
 
-        if (image == null) return false;
 
-        return true;
+        return false;
+    }
+
+    private void loadMaps(String filename) {
+
+    }
+
+    public static boolean isImageExists(String imageName) {
+        File file = new File(imageDir, File.separatorChar + imageName);
+        System.out.println(file);
+        if (file.exists()) return true;
+        return false;
     }
 
     public static ItemStack getImageStick(Image image) {
-        Bukkit.getLogger().info(image.toString());
+        System.out.println("3");
         ImageStick imageStick = new ImageStick(Material.STICK, image);
+        System.out.println("4");
         return imageStick.getItemStack();
     }
 
@@ -86,12 +99,11 @@ public class Images {
     }
 
     public static BufferedImage getImage(String filename) {
-        File file = new File(dataFolder, File.separatorChar + ImageUtils.IMAGES_DIR + File.separatorChar + filename);
+        File file = new File(imageDir, File.separatorChar + filename);
         BufferedImage image = null;
         if (!file.exists()) { return null; }
         try {
             image = ImageIO.read(file);
-            images.put(filename.toLowerCase(), image);
         } catch (IOException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Error");
         }

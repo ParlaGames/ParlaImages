@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.util.StringUtil;
 import xyz.oogiya.parlaimages.util.HiddenStringUtils;
 
 import java.util.ArrayList;
@@ -35,8 +36,7 @@ public class ImageStick {
         } else {
             lore = new ArrayList<>();
         }
-        lore.add(HiddenStringUtils.encodeString("prlm/" + this.image.getFilename() +
-                "/" + this.image.getWidth() + "/" + this.image.getHeight()));
+        lore.add(HiddenStringUtils.encodeString(String.valueOf("prlm/" +  this.image.getImageKey())));
         meta.setLore(lore);
         this.itemStack.setItemMeta(meta);
     }

@@ -1,6 +1,7 @@
 package xyz.oogiya.parlaimages.events;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -47,8 +48,8 @@ public class PlayerEvents implements Listener {
         BlockFace widthDirection = Utils.calculateWidthDirection(playerYaw, blockFace);
         BlockFace heightDirection = Utils.calculateHeightDirection(playerYaw, blockFace);
         if (image != null) {
-            int xFrames = (int)(Math.ceil(image.getWidth() / ImageUtils.MAP_WIDTH)) + 1;
-            int yFrames = (int)(Math.ceil(image.getHeight() / ImageUtils.MAP_HEIGHT)) + 1;
+            int xFrames = (int)(Math.round(image.getWidth() / ImageUtils.MAP_WIDTH));
+            int yFrames = (int)(Math.round(image.getHeight() / ImageUtils.MAP_HEIGHT));
             BlockFace lastFace = blockFace;
 
             if (!isSpaceForImage(xFrames, yFrames, block, blockFace, widthDirection, heightDirection)
@@ -64,6 +65,7 @@ public class PlayerEvents implements Listener {
                     itemFrame.setFacingDirection(blockFace);
                     itemFrame.setItem(Images.getMapItem(i, j, image));
                     itemFrame.setRotation(Utils.facingToRotation(heightDirection, widthDirection));
+                    image.addMapLocationToArray(itemFrame.getLocation());
                 }
             }
         }

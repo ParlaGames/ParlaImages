@@ -25,7 +25,7 @@ public class ParlaImages extends JavaPlugin {
         this.imagesFolder = new File(getDataFolder(), ImageUtils.IMAGES_DIR);
         if (!this.imagesFolder.exists()) new File(getDataFolder(), ImageUtils.IMAGES_DIR).mkdirs();
 
-        this.images = new Images(getDataFolder(), this.getServer());
+        this.images = new Images(getDataFolder(), imagesFolder, this.getServer());
 
         this.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
     }

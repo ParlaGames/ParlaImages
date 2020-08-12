@@ -1,8 +1,12 @@
 package xyz.oogiya.parlaimages.images;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Server;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -25,6 +29,9 @@ public class Images {
     public static File dataFolder;
 
     private static File imageDir;
+
+    private static File mapsFile;
+    private static FileConfiguration mapsConfig;
     //public static Map<UUID, Image> playerImages = new HashMap<UUID, Image>();
 
     private static Server server;
@@ -40,15 +47,33 @@ public class Images {
         this.imageDir = imageDir;
     }
 
-    private boolean saveMaps() {
-
-        if (!dataFolder.exists()) return false;
-
-
-        return false;
+    public static void saveMap(Image image) {
+        List<Location> locationList = image.getMapLocationArray();
+        Location loc = locationList.get(0);
+        String coord = loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ();
+        ConfigurationSection section = mapsConfig.createSection(coord);
+        for (int i = 0; i < locationList.size(); i++) {
+            loc = locationList.get(i);
+            section.set(String.valueOf(i), loc.getBlockX() + "-" + loc.getBlockY() + "-" + loc.getBlockZ());
+        }
+        try {
+            mapsConfig.save(mapsFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void loadMaps(String filename) {
+    public static void loadMaps() {
+
+        mapsFile = new File(dataFolder, "maps.yml");
+        if (!mapsFile.exists()) {
+            try {
+                mapsFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        mapsConfig = YamlConfiguration.loadConfiguration(mapsFile);
 
     }
 
@@ -60,9 +85,7 @@ public class Images {
     }
 
     public static ItemStack getImageStick(Image image) {
-        System.out.println("3");
         ImageStick imageStick = new ImageStick(Material.STICK, image);
-        System.out.println("4");
         return imageStick.getItemStack();
     }
 

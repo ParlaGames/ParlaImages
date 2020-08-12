@@ -20,8 +20,6 @@ import xyz.oogiya.parlaimages.util.HiddenStringUtils;
 import xyz.oogiya.parlaimages.util.ImageUtils;
 import xyz.oogiya.parlaimages.util.Utils;
 
-import java.awt.image.BufferedImage;
-import java.util.UUID;
 
 public class PlayerEvents implements Listener {
 
@@ -68,16 +66,21 @@ public class PlayerEvents implements Listener {
                     image.addMapLocationToArray(itemFrame.getLocation());
                 }
             }
+            Images.saveMap(image);
         }
-
     }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e) {
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && !(e.getHand() == EquipmentSlot.HAND)) {
             if (e.getPlayer().getItemInHand().getType().equals(Material.STICK)) {
-                placeImage(e.getClickedBlock(), e.getBlockFace(), e.getPlayer().getLocation().getYaw(),
-                        ImageUtils.itemStackToImage(e.getPlayer().getItemInHand()));
+                Image image = ImageUtils.itemStackToImage(e.getPlayer().getItemInHand());
+                if (image != null) {
+                    if (Utils.STICKS_BY_PLAYER && !image.getUUID().equals(e.getPlayer().getUniqueId())) return;
+                    placeImage(e.getClickedBlock(), e.getBlockFace(), e.getPlayer().getLocation().getYaw(),
+                            image);
+                    e.getPlayer().setItemInHand(null);
+                }
             }
         }
     }

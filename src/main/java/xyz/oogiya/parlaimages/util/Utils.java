@@ -3,8 +3,11 @@ package xyz.oogiya.parlaimages.util;
 import org.bukkit.Rotation;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import xyz.oogiya.parlaimages.ParlaImages;
 
 public class Utils {
+
+    public static boolean STICKS_BY_PLAYER = ParlaImages.config.getBoolean("STICKS_BY_PLAYER");
 
     public static boolean isBetween(double x, double y1, double y2) {
         if (x >= y1 && x <= y2) return true;

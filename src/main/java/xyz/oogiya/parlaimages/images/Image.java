@@ -23,6 +23,8 @@ public class Image {
     private double scaleY;
     private BufferedImage image;
 
+    private UUID uuid;
+
     private long key;
 
     public Image(String filename, BufferedImage image) {
@@ -61,13 +63,23 @@ public class Image {
         addImageToMap();
     }
 
+    public List<Location> getMapLocationArray() { return this.mapLocationArray; }
+
+    public UUID getUUID() { return this.uuid; }
+
+    public void setUUID(UUID uuid) { this.uuid = uuid; }
+
     private void addImageToMap() {
         while (Images.imageMap.containsKey(this.key)) this.key = ImageUtils.createRandomKey();
         Images.imageMap.put(this.key, this);
     }
 
     public void addMapLocationToArray(Location location) {
-        this.mapLocationArray.add(location);
+        Location loc = location;
+        loc.setX(Math.round(loc.getBlockX()));
+        loc.setY(Math.round(loc.getBlockY()));
+        loc.setZ(Math.round(loc.getBlockZ()));
+        this.mapLocationArray.add(loc);
     }
 
     private void calculateScale() {

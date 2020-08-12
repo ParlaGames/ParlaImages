@@ -2,6 +2,8 @@ package xyz.oogiya.parlaimages;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oogiya.parlaimages.commands.CommandSource;
 import xyz.oogiya.parlaimages.commands.ParlaCommand;
@@ -11,6 +13,7 @@ import xyz.oogiya.parlaimages.util.ImageUtils;
 
 
 import java.io.File;
+import java.io.IOException;
 
 
 public class ParlaImages extends JavaPlugin {
@@ -19,6 +22,9 @@ public class ParlaImages extends JavaPlugin {
 
     private Images images;
 
+    public static FileConfiguration config;
+
+
     public void onEnable() {
 
         //Make images folder
@@ -26,6 +32,9 @@ public class ParlaImages extends JavaPlugin {
         if (!this.imagesFolder.exists()) new File(getDataFolder(), ImageUtils.IMAGES_DIR).mkdirs();
 
         this.images = new Images(getDataFolder(), imagesFolder, this.getServer());
+        this.config = this.getConfig();
+
+        Images.loadMaps();
 
         this.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
     }

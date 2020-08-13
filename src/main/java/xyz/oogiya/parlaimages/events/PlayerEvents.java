@@ -45,6 +45,8 @@ public class PlayerEvents implements Listener {
         Block relative = block.getRelative(blockFace);
         BlockFace widthDirection = Utils.calculateWidthDirection(playerYaw, blockFace);
         BlockFace heightDirection = Utils.calculateHeightDirection(playerYaw, blockFace);
+        image.setWidthDirection(widthDirection.toString());
+        image.setHeightDirection(heightDirection.toString());
         if (image != null) {
             int xFrames = (int)(Math.round(image.getWidth() / ImageUtils.MAP_WIDTH));
             int yFrames = (int)(Math.round(image.getHeight() / ImageUtils.MAP_HEIGHT));
@@ -77,6 +79,8 @@ public class PlayerEvents implements Listener {
                 Image image = ImageUtils.itemStackToImage(e.getPlayer().getItemInHand());
                 if (image != null) {
                     if (Utils.STICKS_BY_PLAYER && !image.getUUID().equals(e.getPlayer().getUniqueId())) return;
+                    image.setSetByUUID(e.getPlayer().getUniqueId());
+                    image.setWorld(e.getPlayer().getWorld().getName());
                     placeImage(e.getClickedBlock(), e.getBlockFace(), e.getPlayer().getLocation().getYaw(),
                             image);
                     e.getPlayer().setItemInHand(null);

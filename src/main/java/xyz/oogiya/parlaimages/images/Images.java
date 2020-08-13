@@ -1,9 +1,8 @@
 package xyz.oogiya.parlaimages.images;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Server;
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -14,8 +13,10 @@ import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
+import sun.security.krb5.Config;
 import xyz.oogiya.parlaimages.util.HiddenStringUtils;
 import xyz.oogiya.parlaimages.util.ImageUtils;
+import xyz.oogiya.parlaimages.util.Utils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -32,7 +33,8 @@ public class Images {
 
     private static File mapsFile;
     private static FileConfiguration mapsConfig;
-    //public static Map<UUID, Image> playerImages = new HashMap<UUID, Image>();
+
+    public static Map<UUID, Image> playerImages = new HashMap<UUID, Image>();
 
     private static Server server;
 
@@ -52,10 +54,18 @@ public class Images {
         Location loc = locationList.get(0);
         String coord = loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ();
         ConfigurationSection section = mapsConfig.createSection(coord);
+        section.set("image", image.getFilename());
+        section.set("width", image.getWidth());
+        section.set("height", image.getHeight());
+        section.set("widthDirection", image.getWidthDirection());
+        section.set("heightDirection", image.getHeightDirection());
+        section.set("world", image.getWorld());
         for (int i = 0; i < locationList.size(); i++) {
             loc = locationList.get(i);
-            section.set(String.valueOf(i), loc.getBlockX() + "-" + loc.getBlockY() + "-" + loc.getBlockZ());
+            section.set("coords." + String.valueOf(i), loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ());
         }
+        if (Utils.STICKS_BY_PLAYER) section.set("UUID", image.getUUID().toString());
+        section.set("placedby", image.getSetByUUID().toString());
         try {
             mapsConfig.save(mapsFile);
         } catch (IOException e) {
@@ -66,6 +76,7 @@ public class Images {
     public static void loadMaps() {
 
         mapsFile = new File(dataFolder, "maps.yml");
+
         if (!mapsFile.exists()) {
             try {
                 mapsFile.createNewFile();
@@ -73,8 +84,35 @@ public class Images {
                 e.printStackTrace();
             }
         }
-        mapsConfig = YamlConfiguration.loadConfiguration(mapsFile);
 
+        mapsConfig = YamlConfiguration.loadConfiguration(mapsFile);
+        for (String item : mapsConfig.getKeys(false)) {
+            if (mapsConfig.getConfigurationSection(item + ".coords") != null) {
+                ConfigurationSection section = mapsConfig.getConfigurationSection(item);
+                Image image = new Image(section.getString(".image"), section.getInt(".width"), section.getInt(".height"),
+                        getImage(section.getString(".image")));
+                image.setWidthDirection(section.getString(".widthDirection"));
+                image.setHeightDirection(section.getString(".heightDirection"));
+                image.setWorld(section.getString("world"));
+                for (String s : section.getConfigurationSection("coords").getKeys(false)) {
+                    String split[] = section.getString("coords" + "." + s).split(",");
+                    image.addMapLocationToArray(new Location(Bukkit.getWorld(section.getString(".world")),
+                            Double.valueOf(split[0]), Double.valueOf(split[1]), Double.valueOf(split[2])));
+                }
+                imageList.add(image);
+            }
+        }
+        test();
+    }
+
+    private static void test() {
+        imageList.forEach(v -> {
+            World world = Bukkit.getWorld(v.getWorld());
+            v.getMapLocationArray().forEach(k -> {
+                //Block block = Bukkit.getWorld(v.getWorld()).getBlockAt(k);
+                System.out.println(world.getNearbyEntities(k, 1, 1, 1));
+            });
+        });
     }
 
     public static boolean isImageExists(String imageName) {

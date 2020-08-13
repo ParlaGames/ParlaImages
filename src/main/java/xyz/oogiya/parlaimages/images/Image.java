@@ -2,6 +2,7 @@ package xyz.oogiya.parlaimages.images;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import xyz.oogiya.parlaimages.util.ImageUtils;
 
@@ -23,7 +24,14 @@ public class Image {
     private double scaleY;
     private BufferedImage image;
 
+    private String widthDirection;
+    private String heightDirection;
+
+    private String world;
+
     private UUID uuid;
+
+    private UUID setByUUID;
 
     private long key;
 
@@ -62,6 +70,22 @@ public class Image {
         this.key = ImageUtils.createRandomKey();
         addImageToMap();
     }
+
+    public void setWorld(String world) { this.world = world; }
+
+    public String getWorld() { return this.world; }
+
+    public String getHeightDirection() { return this.heightDirection; }
+
+    public void setHeightDirection(String heightDirection) { this.heightDirection = heightDirection; }
+
+    public String getWidthDirection() { return this.widthDirection; }
+
+    public void setWidthDirection(String widthDirection) { this.widthDirection = widthDirection; }
+
+    public void setSetByUUID(UUID uuid) { this.setByUUID = uuid; }
+
+    public UUID getSetByUUID() { return this.setByUUID; }
 
     public List<Location> getMapLocationArray() { return this.mapLocationArray; }
 

@@ -8,7 +8,6 @@ import xyz.oogiya.parlaimages.images.Images;
 
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class ImageUtils {
 
@@ -49,5 +48,4 @@ public class ImageUtils {
         OVERLAP,
         SUCCESS
     }
-
 }

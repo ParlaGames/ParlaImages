@@ -6,14 +6,18 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import xyz.oogiya.parlaimages.util.ImageUtils;
 
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.List;
 
 public class Image {
 
-    private List<Location> mapLocationArray = new ArrayList<Location>();
+    //private Map<Location, String> mapLocationArray = new HashMap<>();
+
+    private List<MapIndexLocation> mapList = new ArrayList<>();
 
     private String filename;
     private int originalWidth;
@@ -71,6 +75,13 @@ public class Image {
         addImageToMap();
     }
 
+    public int getMapViewIDByPoint(Point point) {
+        for (MapIndexLocation map : this.mapList) {
+            if (map.getPoint().equals(point)) return map.getID();
+        }
+        return -1;
+    }
+
     public void setWorld(String world) { this.world = world; }
 
     public String getWorld() { return this.world; }
@@ -87,7 +98,9 @@ public class Image {
 
     public UUID getSetByUUID() { return this.setByUUID; }
 
-    public List<Location> getMapLocationArray() { return this.mapLocationArray; }
+    public List<MapIndexLocation> getMapList() { return this.mapList; }
+
+    //public Map<Location, String> getMapLocationArray() { return this.mapLocationArray; }
 
     public UUID getUUID() { return this.uuid; }
 
@@ -98,12 +111,12 @@ public class Image {
         Images.imageMap.put(this.key, this);
     }
 
-    public void addMapLocationToArray(Location location) {
+    public void addMapLocationToArray(Location location, Point point, int id) {
         Location loc = location;
         loc.setX(Math.round(loc.getBlockX()));
         loc.setY(Math.round(loc.getBlockY()));
         loc.setZ(Math.round(loc.getBlockZ()));
-        this.mapLocationArray.add(loc);
+        this.mapList.add(new MapIndexLocation(loc, point, id));
     }
 
     private void calculateScale() {
@@ -115,7 +128,6 @@ public class Image {
 
     private void resetImageSize() {
         if (this.scaleX < 1 || this.scaleY < 1) {
-            System.out.println(this.width);
             BufferedImage resizedImage = new BufferedImage(this.width, this.height, this.image.getType());
             AffineTransform at = new AffineTransform();
             at.scale(this.scaleX, this.scaleY);
@@ -135,4 +147,22 @@ public class Image {
     public double getScaleX() { return this.scaleX; }
 
     public double getScaleY() { return this.scaleY; }
+
+    class MapIndexLocation {
+        private Location location;
+        private Point point;
+        private int id;
+
+        private MapIndexLocation(Location location, Point point, int id) {
+            this.location = location;
+            this.point = point;
+            this.id = id;
+        }
+
+        public int getID() { return this.id; }
+
+        public Point getPoint() { return this.point; }
+
+        public Location getLocation() { return this.location; }
+    }
 }

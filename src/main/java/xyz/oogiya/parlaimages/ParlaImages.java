@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import xyz.oogiya.parlaimages.commands.CommandSource;
 import xyz.oogiya.parlaimages.commands.ParlaCommand;
 import xyz.oogiya.parlaimages.events.PlayerEvents;
+import xyz.oogiya.parlaimages.events.ServerEvents;
 import xyz.oogiya.parlaimages.images.Images;
 import xyz.oogiya.parlaimages.util.ImageUtils;
 
@@ -26,19 +27,24 @@ public class ParlaImages extends JavaPlugin {
 
 
     public void onEnable() {
-
+        File file = new File("maps.yml");
+        if (!file.exists()) saveResource("maps.yml", false);
         //Make images folder
         this.imagesFolder = new File(getDataFolder(), ImageUtils.IMAGES_DIR);
         if (!this.imagesFolder.exists()) new File(getDataFolder(), ImageUtils.IMAGES_DIR).mkdirs();
 
         this.images = new Images(getDataFolder(), imagesFolder, this.getServer());
+        this.saveDefaultConfig();
         this.config = this.getConfig();
 
         Images.loadMaps();
 
         this.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
+        //this.getServer().getPluginManager().registerEvents(new ServerEvents(), this);
     }
-    public void onDisable() {}
+    public void onDisable() {
+
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {

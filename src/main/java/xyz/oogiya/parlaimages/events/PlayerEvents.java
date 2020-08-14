@@ -13,12 +13,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.MapMeta;
+import org.bukkit.map.MapView;
+import xyz.oogiya.parlaimages.images.*;
 import xyz.oogiya.parlaimages.images.Image;
-import xyz.oogiya.parlaimages.images.ImageStick;
-import xyz.oogiya.parlaimages.images.Images;
 import xyz.oogiya.parlaimages.util.HiddenStringUtils;
 import xyz.oogiya.parlaimages.util.ImageUtils;
 import xyz.oogiya.parlaimages.util.Utils;
+
+import java.awt.*;
 
 
 public class PlayerEvents implements Listener {
@@ -54,7 +58,6 @@ public class PlayerEvents implements Listener {
 
             if (!isSpaceForImage(xFrames, yFrames, block, blockFace, widthDirection, heightDirection)
                     .equals(ImageUtils.ImageError.SUCCESS)) {
-                Bukkit.getLogger().info(isSpaceForImage(xFrames, yFrames, block, blockFace, widthDirection, heightDirection).toString());
                 return;
             }
 
@@ -63,9 +66,18 @@ public class PlayerEvents implements Listener {
                     ItemFrame itemFrame = block.getWorld().spawn(relative.getRelative(widthDirection, i)
                             .getRelative(heightDirection, j).getLocation(), ItemFrame.class);
                     itemFrame.setFacingDirection(blockFace);
-                    itemFrame.setItem(Images.getMapItem(i, j, image));
+
+                    /*MapView mapView = Images.getMapItem(i, j, image);
+
+                    ItemStack item = new ItemStack(Material.FILLED_MAP);
+                    MapMeta meta = ((MapMeta)item.getItemMeta());
+                    meta.setMapView(mapView);
+                    item.setItemMeta(meta);*/
+                    ItemStack item = Images.getMapItem(i, j, image);
+                    MapMeta meta = (MapMeta)item.getItemMeta();
+                    itemFrame.setItem(item);
                     itemFrame.setRotation(Utils.facingToRotation(heightDirection, widthDirection));
-                    image.addMapLocationToArray(itemFrame.getLocation());
+                    image.addMapLocationToArray(itemFrame.getLocation(), new Point(i, j), meta.getMapId());
                 }
             }
             Images.saveMap(image);

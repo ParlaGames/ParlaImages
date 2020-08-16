@@ -1,20 +1,22 @@
 package xyz.oogiya.parlaimages;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import xyz.oogiya.parlaimages.commands.CommandSource;
 import xyz.oogiya.parlaimages.commands.ParlaCommand;
+import xyz.oogiya.parlaimages.events.EntityEvents;
 import xyz.oogiya.parlaimages.events.PlayerEvents;
-import xyz.oogiya.parlaimages.events.ServerEvents;
 import xyz.oogiya.parlaimages.images.Images;
+import xyz.oogiya.parlaimages.tasks.BackgroundExecutor;
 import xyz.oogiya.parlaimages.util.ImageUtils;
 
 
 import java.io.File;
-import java.io.IOException;
+import java.util.concurrent.ExecutorService;
 
 
 public class ParlaImages extends JavaPlugin {
@@ -25,6 +27,7 @@ public class ParlaImages extends JavaPlugin {
 
     public static FileConfiguration config;
 
+    public static BackgroundExecutor backgroundExecutor;
 
     public void onEnable() {
         File file = new File("maps.yml");
@@ -37,11 +40,20 @@ public class ParlaImages extends JavaPlugin {
         this.saveDefaultConfig();
         this.config = this.getConfig();
 
+        this.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
+        this.getServer().getPluginManager().registerEvents(new EntityEvents(), this);
+
+        backgroundExecutor = new BackgroundExecutor();
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+            @Override
+            public void run() {
+                backgroundExecutor.processTaskQueue();
+            }
+        }, 20L, 40L);
         Images.loadMaps();
 
-        this.getServer().getPluginManager().registerEvents(new PlayerEvents(), this);
-        //this.getServer().getPluginManager().registerEvents(new ServerEvents(), this);
     }
+
     public void onDisable() {
 
     }

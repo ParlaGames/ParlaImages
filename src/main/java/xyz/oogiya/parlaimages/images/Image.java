@@ -1,9 +1,6 @@
 package xyz.oogiya.parlaimages.images;
 
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.BlockFace;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import xyz.oogiya.parlaimages.util.ImageUtils;
 
 import java.awt.*;
@@ -14,8 +11,6 @@ import java.util.*;
 import java.util.List;
 
 public class Image {
-
-    //private Map<Location, String> mapLocationArray = new HashMap<>();
 
     private List<MapIndexLocation> mapList = new ArrayList<>();
 
@@ -38,6 +33,8 @@ public class Image {
     private UUID setByUUID;
 
     private long key;
+
+    private boolean semaphore = false;
 
     public Image(String filename, BufferedImage image) {
         this.filename = filename;
@@ -82,6 +79,14 @@ public class Image {
         return -1;
     }
 
+    public void resetMapList() {
+        this.mapList = new ArrayList<>();
+    }
+
+    public boolean isSemaphore() { return this.semaphore; }
+
+    public void setSemaphore(boolean placed) { this.semaphore = placed; }
+
     public void setWorld(String world) { this.world = world; }
 
     public String getWorld() { return this.world; }
@@ -99,8 +104,6 @@ public class Image {
     public UUID getSetByUUID() { return this.setByUUID; }
 
     public List<MapIndexLocation> getMapList() { return this.mapList; }
-
-    //public Map<Location, String> getMapLocationArray() { return this.mapLocationArray; }
 
     public UUID getUUID() { return this.uuid; }
 
@@ -148,7 +151,7 @@ public class Image {
 
     public double getScaleY() { return this.scaleY; }
 
-    class MapIndexLocation {
+    public class MapIndexLocation {
         private Location location;
         private Point point;
         private int id;

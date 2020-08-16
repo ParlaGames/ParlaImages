@@ -8,6 +8,7 @@ import xyz.oogiya.parlaimages.ParlaImages;
 public class Utils {
 
     public static boolean STICKS_BY_PLAYER = ParlaImages.config.getBoolean("STICKS_BY_PLAYER");
+    public static int MAX_TASKS = ParlaImages.config.getInt("MAX_TASKS");
 
     public static boolean isBetween(double x, double y1, double y2) {
         if (x >= y1 && x <= y2) return true;

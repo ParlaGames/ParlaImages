@@ -7,8 +7,11 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapView;
+import xyz.oogiya.parlaimages.ParlaImages;
+import xyz.oogiya.parlaimages.tasks.LoadImagesTask;
+import xyz.oogiya.parlaimages.tasks.RemoveImageTask;
+import xyz.oogiya.parlaimages.tasks.SaveImageTask;
 import xyz.oogiya.parlaimages.util.Utils;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -25,11 +28,14 @@ public class Images {
     private static File imageDir;
 
     private static File mapsFile;
+
     private static FileConfiguration mapsConfig;
 
     private static Server server;
 
     public static List<Image> imageList = new ArrayList<>();
+
+    public static Map<Integer, Image> images = new HashMap<>();
 
     public static Map<Long, Image> imageMap = new HashMap<>();
 
@@ -37,38 +43,8 @@ public class Images {
         this.dataFolder = dataFolder;
         this.server = server;
         this.imageDir = imageDir;
-    }
 
-    public static void saveMap(Image image) {
-        List<Image.MapIndexLocation> locationList = image.getMapList();
-        Location loc = locationList.get(0).getLocation();
-        String coord = loc.getBlockX() + "," + loc.getBlockY() + "," + loc.getBlockZ();
-        ConfigurationSection section = mapsConfig.createSection(coord);
-        section.set("image", image.getFilename());
-        section.set("width", image.getWidth());
-        section.set("height", image.getHeight());
-        section.set("widthDirection", image.getWidthDirection());
-        section.set("heightDirection", image.getHeightDirection());
-        section.set("world", image.getWorld());
-        locationList.forEach(k -> {
-
-            ConfigurationSection subSection = section.createSection("maps." + k.getID());
-            subSection.set("i", k.getPoint().x);
-            subSection.set("j", k.getPoint().y);
-            subSection.set("location", k.getLocation().getBlockX() + "," + k.getLocation().getBlockY() + "," +
-                            k.getLocation().getBlockZ());
-        });
-        if (Utils.STICKS_BY_PLAYER) section.set("UUID", image.getUUID().toString());
-        section.set("placedby", image.getSetByUUID().toString());
-        try {
-            mapsConfig.save(mapsFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void loadMaps() {
-        mapsFile = new File(dataFolder, "maps.yml");
+        this.mapsFile = new File(dataFolder, "maps.yml");
 
         if (!mapsFile.exists()) {
             try {
@@ -77,23 +53,19 @@ public class Images {
                 e.printStackTrace();
             }
         }
-        mapsConfig = YamlConfiguration.loadConfiguration(mapsFile);
-        for (String s : mapsConfig.getKeys(false)) {
-            String filename = mapsConfig.getString(s + ".image");
-            BufferedImage bufferedImage = getImage(filename);
-            int width = mapsConfig.getInt(s + ".width");
-            int height = mapsConfig.getInt(s + ".height");
-            String world = mapsConfig.getString(s + ".world");
-            Image image = new Image(filename, width, height, bufferedImage);
-            ConfigurationSection maps = mapsConfig.getConfigurationSection(s + ".maps");
-            for (String item : maps.getKeys(false)) {
-                int i = maps.getInt(item + ".i");
-                int j = maps.getInt(item + ".j");
 
-                MapView mapView = Bukkit.getMap(Integer.valueOf(item));
-                mapView.addRenderer(new ImageMapRenderer(image.getImage(), i, j));
-            }
-        }
+    }
+
+    public static void saveMap(Image image) {
+        ParlaImages.backgroundExecutor.addTask(new SaveImageTask(image, mapsFile));
+    }
+
+    public static void removeMap(Image image) {
+        ParlaImages.backgroundExecutor.addTask(new RemoveImageTask(image, mapsFile));
+    }
+
+    public static void loadMaps() {
+        ParlaImages.backgroundExecutor.addTask(new LoadImagesTask(mapsFile));
     }
 
     public static boolean isImageExists(String imageName) {
@@ -103,7 +75,7 @@ public class Images {
     }
 
     public static ItemStack getImageStick(Image image) {
-        ImageStick imageStick = new ImageStick(Material.STICK, image);
+        ImageStick imageStick = new ImageStick(image);
         return imageStick.getItemStack();
     }
 
@@ -136,8 +108,6 @@ public class Images {
         } catch (IOException ex) {
             Bukkit.getLogger().log(Level.SEVERE, "Error");
         }
-
         return image;
     }
-
 }

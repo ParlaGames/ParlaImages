@@ -22,8 +22,8 @@ public class ImageStick {
         setHiddenMeta();
     }
 
-    public ImageStick(Material stick, Image image) {
-        this.itemStack = new ItemStack(stick);
+    public ImageStick(Image image) {
+        this.itemStack = new ItemStack(Material.STICK);
         this.image = image;
         setHiddenMeta();
     }

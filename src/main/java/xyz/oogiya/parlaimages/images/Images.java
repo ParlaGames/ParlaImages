@@ -39,6 +39,8 @@ public class Images {
 
     public static Map<Long, Image> imageMap = new HashMap<>();
 
+    public static Map<Location, Image> imageLocationMap = new HashMap<>();
+
     public Images(File dataFolder, File imageDir, Server server) {
         this.dataFolder = dataFolder;
         this.server = server;

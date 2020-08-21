@@ -53,6 +53,7 @@ public class SaveImageTask extends Task {
             e.printStackTrace();
         }
         Images.imageList.add(image);
+        Images.imageLocationMap.put(loc, image);
     }
 
     @Override

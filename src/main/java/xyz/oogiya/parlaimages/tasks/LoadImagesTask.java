@@ -1,6 +1,7 @@
 package xyz.oogiya.parlaimages.tasks;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -37,6 +38,7 @@ public class LoadImagesTask extends Task {
             Image image = new Image(filename, width, height, bufferedImage);
             image.setSetByUUID(UUID.fromString(mapsConfig.getString(s + ".placedby")));
             image.setUUID(UUID.fromString(mapsConfig.getString(s + ".UUID")));
+            image.setWorld(world);
             ConfigurationSection maps = mapsConfig.getConfigurationSection(s + ".maps");
             for (String item : maps.getKeys(false)) {
                 int i = maps.getInt(item + ".i");
@@ -47,6 +49,9 @@ public class LoadImagesTask extends Task {
                 Images.images.put(index, image);
             }
             Images.imageList.add(image);
+            String location[] = s.split(",");
+            Images.imageLocationMap.put(new Location(Bukkit.getWorld(world), Integer.valueOf(location[0]),
+                    Integer.valueOf(location[1]), Integer.valueOf(location[2])), image);
         }
     }
 
